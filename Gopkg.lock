@@ -28,15 +28,9 @@
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
   version = "v0.8.0"
 
-[[projects]]
-  branch = "master"
-  name = "github.com/streadway/amqp.git"
-  packages = ["."]
-  revision = "e5adc2ada8b8efff032bf61173a233d143e9318e"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d25dece55c2e16535b4fb314513cd302a2c57dfb494ef313af8b973a3dec8c55"
+  inputs-digest = "be09d418546f82b280ea98b0e4b5e5e6c39a0ccf07754cd0d2e554bee41e2f69"
   solver-name = "gps-cdcl"
   solver-version = 1
