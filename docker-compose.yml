@@ -1,0 +1,52 @@
+version: "3.3"
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.4
+    container_name: go_elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      transport.host: "0.0.0.0"
+      http.host: "0.0.0.0"
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      cluster.name: "aineko_elastic"
+      network.host: "0.0.0.0"
+      discovery.zen.minimum_master_nodes: "1"
+      discovery.type: "single-node"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - test_network
+  kibana:
+      depends_on:
+        - elasticsearch
+      image: docker.elastic.co/kibana/kibana-oss:6.2.4
+      container_name: go_kibana
+      environment:
+        SERVER_NAME: kibananananana
+        ELASTICSEARCH_URL: http://elasticsearch:9200
+
+      ports:
+        - "5601:5601"
+      #volumes:
+       # - ./docker/elastic/conifg/kibana.yml:/usr/share/kibana/config/kibana.yml
+      networks:
+        - test_network
+  rabbitmq:
+    image: rabbitmq:3.7.7-management-alpine
+    container_name: go-rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+      - 33672:33672
+    networks:
+      - test_network
+    environment:
+      RABBITMQ_DEFAULT_USER: thedude
+      RABBITMQ_DEFAULT_PASS: opinion
+networks:
+  test_network:
+    driver: bridge
