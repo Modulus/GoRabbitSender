@@ -16,7 +16,7 @@ type Response struct {
 
 func GetJSON(paragraphs int, quotes int) string {
 
-	response := GetJsonRaw(paragraphs, quotes)
+	response := GetJSONRaw(paragraphs, quotes)
 
 	bytes, _ := json.Marshal(response)
 	log.Printf("===================================\n")
@@ -26,7 +26,7 @@ func GetJSON(paragraphs int, quotes int) string {
 	return string(string(bytes))
 }
 
-func GetJsonRaw(paragraphs, quotes int) Response {
+func GetJSONRaw(paragraphs, quotes int) Response {
 	log.Println("Starting the application...")
 	response, err := http.Get(fmt.Sprintf("http://loremricksum.com/api/?paragraphs=%d&quotes=%d", paragraphs, quotes))
 	if err != nil {

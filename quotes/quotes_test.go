@@ -14,7 +14,7 @@ func TestGetJSON(t *testing.T) {
 }
 
 func TestGetRawJSON(t *testing.T) {
-	var raw Response = GetJsonRaw(1, 4)
+	raw := GetJSONRaw(1, 4)
 
 	if raw.Created == "" || len(raw.Data) <= 0 {
 		t.Fatalf("No json returned")
