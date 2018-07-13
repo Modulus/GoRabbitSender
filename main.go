@@ -13,5 +13,5 @@ func main() {
 	log.Printf(json)
 
 	log.Printf("Sending message to rabbitmq")
-	rabbit.SendMessage(json)
+	rabbit.SendMessage(json, "messageExchange")
 }

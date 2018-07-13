@@ -7,7 +7,39 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func SendMessage(json string) {
+func buildChannel(exchangeName string) (*amqp.Channel, error) {
+	conn, err := amqp.Dial("amqp://thedude:opinion@localhost:5672/")
+	if err != nil {
+		return nil, err
+	}
+	amqpChan, err := conn.Channel()
+	if err != nil {
+		return nil, err
+	}
+
+	err = amqpChan.ExchangeDeclare(exchangeName,
+		"fanout",
+		true,
+		false,
+		false,
+		false, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Clear amqp channel if connection to server is lost
+	amqpErrorChan := make(chan *amqp.Error)
+	amqpChan.NotifyClose(amqpErrorChan)
+	go func(ec chan *amqp.Error) {
+		for msg := range ec {
+			log.Fatalf("Channel Cleanup %s\n", msg)
+		}
+	}(amqpErrorChan)
+
+	return amqpChan, err
+}
+
+func SendMessage(json string, exchangeName string) {
 
 	log.Printf("Received message %s\n", json)
 	log.Printf("Connection to rabbitmq")
@@ -16,9 +48,8 @@ func SendMessage(json string) {
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer connection.Close()
 
-	channel, err := connection.Channel()
-	failOnError(err, "Failed to open channel")
-	defer channel.Close()
+	channel, err := buildChannel("messageExchange")
+	failOnError(err, "Failed to build channel")
 
 	queue, err := channel.QueueDeclare(
 		"messages",
@@ -32,7 +63,7 @@ func SendMessage(json string) {
 
 	log.Printf("Publishing message to rabbitmq")
 	err = channel.Publish(
-		"", //exchange
+		exchangeName, //exchange
 		queue.Name,
 		false,
 		false,
