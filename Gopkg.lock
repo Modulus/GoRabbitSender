@@ -3,40 +3,19 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/mailru/easyjson"
-  packages = [
-    ".",
-    "buffer",
-    "jlexer",
-    "jwriter"
-  ]
-  revision = "3fdea8d05856a0c8df22ed4bc71b3219245e4485"
-
-[[projects]]
-  name = "github.com/olivere/elastic"
-  packages = [
-    ".",
-    "config",
-    "uritemplates"
-  ]
-  revision = "229adca7643e572e471ea3e8e018d651b728713d"
-  version = "v6.1.25"
-
-[[projects]]
-  name = "github.com/pkg/errors"
-  packages = ["."]
-  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
-  version = "v0.8.0"
-
-[[projects]]
-  branch = "master"
   name = "github.com/streadway/amqp"
   packages = ["."]
   revision = "e5adc2ada8b8efff032bf61173a233d143e9318e"
 
+[[projects]]
+  name = "github.com/tkanos/gonfig.git"
+  packages = ["."]
+  revision = "e83209aed2d171bab5ffb312a1e630110481cb99"
+  version = "1.0"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1e4b3c9ad3254363953afd26f39bda20db057a71287eb143366f0c8b037963ec"
+  inputs-digest = "20ece096eecdda9b5e0a46bda04f5fb4bf18f49ad820957d144d5dcde014e15c"
   solver-name = "gps-cdcl"
   solver-version = 1

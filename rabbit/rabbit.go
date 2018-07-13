@@ -39,20 +39,20 @@ func buildChannel(exchangeName string) (*amqp.Channel, error) {
 	return amqpChan, err
 }
 
-func SendMessage(json string, exchangeName string) {
+func SendMessage(json, queueName, exchangeName, rabbitmqConnectionString string) {
 
 	log.Printf("Received message %s\n", json)
 	log.Printf("Connection to rabbitmq")
 
-	connection, err := amqp.Dial("amqp://thedude:opinion@localhost:5672/")
+	connection, err := amqp.Dial(rabbitmqConnectionString)
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer connection.Close()
 
-	channel, err := buildChannel("messageExchange")
+	channel, err := buildChannel(exchangeName)
 	failOnError(err, "Failed to build channel")
 
 	queue, err := channel.QueueDeclare(
-		"messages",
+		queueName,
 		false,
 		false,
 		false,

@@ -36,3 +36,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/streadway/amqp.git"
+
+[[constraint]]
+  name = "github.com/tkanos/gonfig.git"
+  version = "1.0.0"
