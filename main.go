@@ -38,7 +38,7 @@ func main() {
 	config := createConfiguration()
 	fmt.Println(config)
 
-	json := quotes.CreateJSON(1, 4)
+	json := quotes.GetJSON(1, 4)
 	log.Printf(json)
 
 	log.Printf("Sending message to rabbitmq")

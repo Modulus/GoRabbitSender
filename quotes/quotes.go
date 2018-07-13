@@ -14,7 +14,19 @@ type Response struct {
 	Created string   `json:string`
 }
 
-func CreateJSON(paragraphs int, quotes int) string {
+func GetJSON(paragraphs int, quotes int) string {
+
+	response := GetJsonRaw(paragraphs, quotes)
+
+	bytes, _ := json.Marshal(response)
+	log.Printf("===================================\n")
+	log.Printf("%v\n", string(bytes))
+	log.Printf("===================================\n")
+
+	return string(string(bytes))
+}
+
+func GetJsonRaw(paragraphs, quotes int) Response {
 	log.Println("Starting the application...")
 	response, err := http.Get(fmt.Sprintf("http://loremricksum.com/api/?paragraphs=%d&quotes=%d", paragraphs, quotes))
 	if err != nil {
@@ -30,10 +42,6 @@ func CreateJSON(paragraphs int, quotes int) string {
 	jsonResponse := Response{}
 	json.Unmarshal(output, &jsonResponse)
 	jsonResponse.Created = currentDate
-	bytes, _ := json.Marshal(jsonResponse)
-	log.Printf("===================================\n")
-	log.Printf("%v\n", string(bytes))
-	log.Printf("===================================\n")
 
-	return string(string(bytes))
+	return jsonResponse
 }
