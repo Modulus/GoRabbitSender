@@ -7,33 +7,6 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func () buildChannel() (*amqp.Channel, error) {
-	conn, err := amqp.Dial(hook.connString)
-	if err != nil {
-		return nil, err
-	}
-	amqpChan, err := conn.Channel()
-	if err != nil {
-		return nil, err
-	}
-
-	err = amqpChan.ExchangeDeclare(hook.exchangeName, "fanout", true, hook.AutoDeleteExchange, hook.InternalExchange, hook.NowaitExchange, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	// Clear amqp channel if connection to server is lost
-	amqpErrorChan := make(chan *amqp.Error)
-	amqpChan.NotifyClose(amqpErrorChan)
-	go func(h *AmqpHook, ec chan *amqp.Error) {
-		for msg := range ec {
-			logrus.Errorf("AmqpHook.buildChannel> Channel Cleanup %s\n", msg)
-			h.amqpChan = nil
-		}
-	}(hook, amqpErrorChan)
-	return amqpChan, err
-}
-
 func SendMessage(json string) {
 
 	log.Printf("Received message %s\n", json)
