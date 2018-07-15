@@ -48,8 +48,8 @@ func NewSender(configFilePath string) *Sender {
 	return sender
 }
 
-func buildChannel(exchangeName string) (*amqp.Channel, error) {
-	conn, err := amqp.Dial("amqp://thedude:opinion@localhost:5672/")
+func (s Sender) buildChannel() (*amqp.Channel, error) {
+	conn, err := amqp.Dial(s.Config.RabbitmqConnectionString)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func buildChannel(exchangeName string) (*amqp.Channel, error) {
 		return nil, err
 	}
 
-	err = amqpChan.ExchangeDeclare(exchangeName,
+	err = amqpChan.ExchangeDeclare(s.Config.RabbitmqExchangeName,
 		"fanout",
 		true,
 		false,
@@ -89,7 +89,7 @@ func (s Sender) SendMessage(json string) {
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer connection.Close()
 
-	channel, err := buildChannel(s.Config.RabbitmqExchangeName)
+	channel, err := s.buildChannel()
 	failOnError(err, "Failed to build channel")
 
 	queue, err := channel.QueueDeclare(
