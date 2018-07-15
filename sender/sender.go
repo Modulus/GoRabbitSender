@@ -1,11 +1,52 @@
-package rabbit
+package sender
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/streadway/amqp"
 )
+
+type Configuration struct {
+	RabbitmqConnectionString      string
+	RabbitmqExchangeName          string
+	RabbitmqQueueName             string
+	ElasticsearchConnectionString string
+}
+
+func createConfiguration(filePath string) Configuration {
+	file, err := os.Open(filePath)
+
+	if err != nil {
+		log.Printf("Failed to open file at %s", filePath)
+		file, _ = os.Open("config.json")
+
+	}
+
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+	configuration := Configuration{}
+	err = decoder.Decode(&configuration)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	fmt.Println(configuration)
+
+	return configuration
+}
+
+type Sender struct {
+	Config Configuration
+}
+
+func NewSender(configFilePath string) *Sender {
+	sender := new(Sender)
+	sender.Config = createConfiguration(configFilePath)
+	return sender
+}
 
 func buildChannel(exchangeName string) (*amqp.Channel, error) {
 	conn, err := amqp.Dial("amqp://thedude:opinion@localhost:5672/")
@@ -39,20 +80,20 @@ func buildChannel(exchangeName string) (*amqp.Channel, error) {
 	return amqpChan, err
 }
 
-func SendMessage(json, queueName, exchangeName, rabbitmqConnectionString string) {
+func (s Sender) SendMessage(json string) {
 
 	log.Printf("Received message %s\n", json)
 	log.Printf("Connection to rabbitmq")
 
-	connection, err := amqp.Dial(rabbitmqConnectionString)
+	connection, err := amqp.Dial(s.Config.RabbitmqConnectionString)
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer connection.Close()
 
-	channel, err := buildChannel(exchangeName)
+	channel, err := buildChannel(s.Config.RabbitmqExchangeName)
 	failOnError(err, "Failed to build channel")
 
 	queue, err := channel.QueueDeclare(
-		queueName,
+		s.Config.RabbitmqQueueName,
 		false,
 		false,
 		false,
@@ -63,7 +104,7 @@ func SendMessage(json, queueName, exchangeName, rabbitmqConnectionString string)
 
 	log.Printf("Publishing message to rabbitmq")
 	err = channel.Publish(
-		exchangeName, //exchange
+		s.Config.RabbitmqExchangeName, //exchange
 		queue.Name,
 		false,
 		false,

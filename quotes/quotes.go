@@ -19,9 +19,7 @@ func GetJSON(paragraphs int, quotes int) string {
 	response := GetJSONRaw(paragraphs, quotes)
 
 	bytes, _ := json.Marshal(response)
-	log.Printf("===================================\n")
-	log.Printf("%v\n", string(bytes))
-	log.Printf("===================================\n")
+	log.Printf("Found%v\n", string(bytes))
 
 	return string(string(bytes))
 }
